@@ -2,6 +2,18 @@
 
 <hr>
 
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/material.min.css"
+/>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/go/go.min.js" integrity="sha512-dh8pBX6P5WZ63k5cSrF64G2QqKAHnLCjnP7vZOmz4peYWedM5lXyH/AqpUldSFBtubTK54kmwN6XAn/T2sVDVQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 #### 1. 컴파일러 vs 인터프리터
 
 ###### 컴파일러
@@ -75,7 +87,7 @@ $ go get package@version
 
 - 아래 코드는 Go언어를 통해 Hello World를 출력하는 코드
 
-```go
+<textarea placeholder="Enter Go Source Code" class="code">
 package main
 
 import "fmt"
@@ -83,18 +95,17 @@ import "fmt"
 func main() {
   fmt.Println("Hello World")
 }
-```
+</textarea>
+<button class="btn">실행</button>
 
-```
-출력: Hello World
-```
+<iframe class="frame"></iframe>
 
 #### 5. struct
 
 - Go언어는 class 문법을 지원하지 않기 때문에, struct를 자주 사용
 - 아래 코드는 Go언어를 통해 간단한 Person 객체를 정의하는 코드
 
-```go
+<textarea placeholder="Enter Go Source Code" class="code">
 package main
 
 import "fmt"
@@ -111,18 +122,16 @@ func main() {
   p.age = 10
   fmt.Println(p)
 }
-```
+</textarea>
+<button class="btn">실행</button>
 
-```
-출력: {Lee 10}
-```
+<iframe class="frame"></iframe>
 
 #### 6. Go루틴
 
 - Go루틴을 통해 비동기 처리 가능
 - 아래 코드는 간단한 Go루틴 호출 코드
-
-```go
+<textarea placeholder="Enter Go Source Code" class="code">
 package main
 
 import (
@@ -131,7 +140,7 @@ import (
 )
 
 func say(s string) {
-	for i := 0; i < 3; i++ {
+	for i := 0; i < 3; i++ { 
 		fmt.Println(s, "***", i)
 	}
 }
@@ -145,20 +154,49 @@ func main() {
 
 	time.Sleep(time.Second * 3)
 }
-```
+</textarea>
+<button class="btn">실행</button>
 
-```
-출력:
-Sync *** 0
-Sync *** 1
-Sync *** 2
-Async1 *** 0
-Async1 *** 1
-Async1 *** 2
-Async2 *** 0
-Async3 *** 0
-Async3 *** 1
-Async3 *** 2
-Async2 *** 1
-Async2 *** 2
-```
+<iframe class="frame"></iframe>
+
+<script>
+const codes = document.querySelectorAll("textarea.code");
+const buttons = document.querySelectorAll("button.btn");
+const frames = document.querySelectorAll("iframe.frame");
+var editors = []
+
+codes.forEach((element, index) => {
+  editors.push(CodeMirror.fromTextArea(element, {
+    matchBrackets: true,
+    lineWrapping: true,
+    styleActiveLine: true,
+    mode: 'go',
+    lineNumbers: true,  
+    theme: 'material',
+    tabSize: 2
+  }));
+
+
+buttons[index].addEventListener("click", async () => {
+  const apiUrl = "http://localhost:4321/execute";
+
+
+const response = await fetch(apiUrl, {
+  method: "POST",
+  headers: { "Content-Type": "text/plain" },
+  body: codes[index].value,
+});
+
+console.log(codes[index].value)
+
+if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Server Error: ${errorText}`);
+}
+
+const result = await response.text();
+frames[index].srcdoc = `<pre>${result}</pre>`;
+
+})})
+
+</script>

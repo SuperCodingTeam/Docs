@@ -75,6 +75,10 @@
 - 리소스를 읽거나 검색할 때 사용
 - 멱등성을 지님
 - 데이터를 쿼리스트링(Query String)으로 전달
+
+      - `쿼리스트링`은 URL의 뒤에 입력 데이터를 함께 제공하는 가장 단순한 데이터 전달 방법
+      - 예시: `https://blog.com?key=value&key2=value2` = blog.com 사이트에 `{key: value, key2: value}`라는 데이터를 전송
+
 - 성공 시 `200 OK`, 실패 시 `404 Not Found` 또는 `400 Bad Request`
 
 ###### POST
